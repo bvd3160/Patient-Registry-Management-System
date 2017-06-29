@@ -37,7 +37,7 @@ class DBConnect {
         }
     }
     
-    public boolean login(String loginQuery){
+    public boolean loginPossible(String loginQuery){
        //Connect to the database
        Connection conn = null;
        ResultSet resultSet = null;
