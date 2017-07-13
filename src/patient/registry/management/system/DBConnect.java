@@ -21,12 +21,21 @@ class DBConnect {
             
     }
     
-    public void updateTable(String updateQuery){
-       //Connect to the database
-       Connection conn = null;
+    public Connection getConnection(){
+        Connection conn = null;
         try {
             conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
             System.out.println("Databse Connected!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e, "Warning", JOptionPane.ERROR_MESSAGE); 
+        }
+        return conn;
+    }
+    
+    public void updateTable(String updateQuery){
+       //Connect to the database
+       Connection conn = getConnection();
+        try {
             Statement stmt = (Statement) conn.createStatement();
             stmt.executeUpdate(updateQuery);
             conn.close();
@@ -39,13 +48,11 @@ class DBConnect {
     
     public boolean loginPossible(String loginQuery){
        //Connect to the database
-       Connection conn = null;
+       Connection conn = getConnection();
        ResultSet resultSet = null;
        Boolean result = false;
        MainWindow mainWindow = new MainWindow();
         try {
-            conn = DriverManager.getConnection(CONN_STRING, USERNAME, PASSWORD);
-            System.out.println("Databse Connected!");
             Statement stmt = (Statement) conn.createStatement();
             resultSet = stmt.executeQuery(loginQuery);
             while(resultSet.next()){
