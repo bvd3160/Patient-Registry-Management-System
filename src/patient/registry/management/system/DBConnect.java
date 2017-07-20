@@ -73,5 +73,23 @@ class DBConnect {
         }
         return result;
     }
+
+    boolean searchDatabase(String searchQuery) {
+       boolean result = false;
+       Connection conn = getConnection();
+       ResultSet resultSet = null;
+       try {
+            Statement stmt = (Statement) conn.createStatement();
+            resultSet = stmt.executeQuery(searchQuery);
+            while(resultSet.next()){
+                System.out.println("SEARCH SOMEWHAT WORKS!");            
+            }
+            conn.close();
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e, "Warning", JOptionPane.ERROR_MESSAGE);
+            result = false;
+        }
+       return result;
+    }
     
 }
