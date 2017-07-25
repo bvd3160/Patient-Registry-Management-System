@@ -508,7 +508,8 @@ public class Search extends javax.swing.JFrame {
                 "%' OR fName LIKE '%"+fName+"%' OR lName LIKE '%"+lName+
                 "%' OR date LIKE '%"+admDate+"%' OR ward LIKE '%"+ward+
                 "%' OR room = '"+room+"'";
-        boolean result = datalink.searchDatabase(searchQuery);
+        datalink.searchDatabase(searchQuery);
+        datalink.importSearchResult();
         //Now that searc somewhat works, let's get the resultset
         
     
