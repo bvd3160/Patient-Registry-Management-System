@@ -5,15 +5,9 @@
  */
 package patient.registry.management.system;
 
-import java.awt.BorderLayout;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Vector;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 /**
  *
@@ -28,6 +22,10 @@ class DBConnect {
             
     }
     
+    /**
+     * Establishing a connection to the database
+     * @return whether or not a connection was established.
+     */
     public Connection getConnection(){
         Connection conn = null;
         try {
@@ -39,6 +37,12 @@ class DBConnect {
         return conn;
     }
     
+    /**
+     * 
+     * @param updateQuery
+     * 
+     * Inserting new data into a table.
+     */
     public void updateTable(String updateQuery){
        //Connect to the database
        Connection conn = getConnection();
@@ -53,6 +57,12 @@ class DBConnect {
         }
     }
     
+    /**
+     * 
+     * @param loginQuery
+     * @return whether or not it's possible to log in based on 
+     * the details the user has given.
+     */
     public boolean loginPossible(String loginQuery){
        //Connect to the database
        Connection conn = getConnection();
@@ -81,55 +91,34 @@ class DBConnect {
         return result;
     }
 
-    public void searchDatabase(String searchQuery) {
+    /**
+     * 
+     * @param searchQuery 
+     * Search the patient table and if there are any results,
+     * return an ArrayList full of the results to be displayed on
+     * a table of your choosing.
+     */
+    public ArrayList<Patient> searchDatabase(String searchQuery) {
        Connection conn = getConnection();
-       ArrayList arr = null;
-       ResultSet resultSet = null;
+       ArrayList<Patient> patientsList = new ArrayList<>();
+       ResultSet rs = null;
        try {
             Statement stmt = (Statement) conn.createStatement();
-            resultSet = stmt.executeQuery(searchQuery);
-            
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            int colCount = rsmd.getColumnCount();
-            Vector column = new Vector(colCount);
-            for (int i = 0; i < colCount; i++) {
-               column.add(rsmd.getColumnName(i));
-            }
-            Vector data = new Vector();
-            Vector row = new Vector();
-            while(resultSet.next()){
+            rs = stmt.executeQuery(searchQuery);
+            ResultSetMetaData rsmd = rs.getMetaData();
+            Patient patient;
+            while(rs.next()){
+                patient = new Patient(rs.getInt("patient_id"), rs.getString("fname"), rs.getString("lname")
+                , rs.getString("gender"), rs.getString("address"), rs.getString("phonenum"), rs.getString("medcondition")
+                , rs.getString("comments"), rs.getString("ward"), rs.getString("room"), rs.getDate("dob")
+                , rs.getDate("date"), rs.getTime("time"));
+                patientsList.add(patient);
                 System.out.println("SEARCH SOMEWHAT WORKS!");
-                row = new Vector(colCount);
-                for (int i = 0; i < colCount; i++) {
-                    row.add(resultSet.getString(i));
-                }
-                data.add(row);
             }
-            //Testing out that the search feature works!
-            JFrame frame = new JFrame();
-            frame.setSize(600, 720);
-            frame.setLocationRelativeTo(null);
-            JPanel panel = new JPanel();
-            JTable table = new JTable(data, column);
-            JScrollPane scrollPane = new JScrollPane(table);
-            panel.setLayout(new BorderLayout());
-            panel.add(scrollPane, BorderLayout.CENTER);
-            frame.setContentPane(scrollPane);
-            frame.setVisible(true);
-            
             conn.close();
         }catch (Exception e) {
             JOptionPane.showMessageDialog(null, e, "Warning", JOptionPane.ERROR_MESSAGE);
         }
-       exportSearchResult(arr);
-    }
-    
-    private void exportSearchResult(ArrayList data){
-        
-    }
-        
-    public void importSearchResult(){
-        
-    }
-    
+        return patientsList;
+    }    
 }

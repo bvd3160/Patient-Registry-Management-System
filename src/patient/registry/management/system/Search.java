@@ -5,6 +5,9 @@
  */
 package patient.registry.management.system;
 
+import java.util.ArrayList;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author jeany
@@ -43,7 +46,7 @@ public class Search extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        patients_table = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -89,19 +92,41 @@ public class Search extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Patient Registery");
 
-        jTable1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        patients_table.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        patients_table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Id", "First Name", "Last Name", "Gender", "DOB", "Address", "Phone", "Med Condition", "Comments", "Admission Date", "Ward", "Room", "Admission Time"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        patients_table.setColumnSelectionAllowed(true);
+        jScrollPane1.setViewportView(patients_table);
 
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/patient/registry/management/system/resources/images/logo.png"))); // NOI18N
 
@@ -313,7 +338,7 @@ public class Search extends javax.swing.JFrame {
                                     .addComponent(sProom))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jLayeredPane1Layout.createSequentialGroup()
                                 .addComponent(jButton2)
                                 .addGap(18, 18, 18)
@@ -378,7 +403,7 @@ public class Search extends javax.swing.JFrame {
                 .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
                     .addComponent(jLabel8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jLayeredPane1Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
@@ -508,11 +533,31 @@ public class Search extends javax.swing.JFrame {
                 "%' OR fName LIKE '%"+fName+"%' OR lName LIKE '%"+lName+
                 "%' OR date LIKE '%"+admDate+"%' OR ward LIKE '%"+ward+
                 "%' OR room = '"+room+"'";
-        datalink.searchDatabase(searchQuery);
-        datalink.importSearchResult();
-        //Now that searc somewhat works, let's get the resultset
         
-    
+        String search = "SELECT * FROM patient";
+        ArrayList<Patient> patientList = datalink.searchDatabase(search);
+        
+        //Lets bind the returned Arraylist to the patients table
+        DefaultTableModel model = (DefaultTableModel) patients_table.getModel();
+        model.setRowCount(0);
+        Object[] row = new Object[13]; //13 columns
+        for (int i = 0; i < patientList.size(); i++) {
+            row[0] = patientList.get(i).getpId();
+            row[1] = patientList.get(i).getfName();
+            row[2] = patientList.get(i).getlName();
+            row[3] = patientList.get(i).getGender();
+            row[4] = patientList.get(i).getDob();
+            row[5] = patientList.get(i).getAddress();
+            row[6] = patientList.get(i).getPhonenum();
+            row[7] = patientList.get(i).getMedCon();
+            row[8] = patientList.get(i).getComments();
+            row[9] = patientList.get(i).getAdmDate();
+            row[10] = patientList.get(i).getWard();
+            row[11] = patientList.get(i).getRoom();
+            row[12] = patientList.get(i).getAdmTime();
+            
+            model.addRow(row);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
 
@@ -549,8 +594,8 @@ public class Search extends javax.swing.JFrame {
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTable patients_table;
     private javax.swing.JTextField sPId;
     private javax.swing.JTextField sPadimDate;
     private javax.swing.JTextField sPfName;
